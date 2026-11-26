@@ -257,11 +257,32 @@ function choose(product) {
   document.getElementById('interest').value=product;
   document.getElementById('contact').scrollIntoView({behavior:'smooth'});
 }
-document.getElementById('leadForm').addEventListener('submit',function(e) {
-  e.preventDefault();
-  document.getElementById('message').style.display='block';
-});
-</script>
 
-</body>
-</html>
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwoVOW3Ie0XeVIboi5ZRrQazGU_K6cmimuHCEQ9bG5Fw3eSM37AEN_pbrkCyX4k1JdM4g/exec';
+
+document.getElementById('leadForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const form = this;
+  const data = new URLSearchParams();
+
+  data.append('name', form.querySelector('[name="name"]').value);
+  data.append('phone', form.querySelector('[name="contact"]').value);
+  data.append('product', document.getElementById('interest').value);
+
+  try {
+    await fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: data
+    });
+
+    document.getElementById('message').textContent =
+      'Заявка отправлена! Скоро свяжемся с вами.';
+    document.getElementById('message').style.display = 'block';
+    form.reset();
+
+  } catch (error) {
+    alert('Ошибка отправки. Попробуйте ещё раз.');
+  }
+});
